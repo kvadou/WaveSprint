@@ -1,0 +1,9 @@
+-- Disable Row Level Security for WaveSprint tables
+-- Run this AFTER running schema.sql
+
+ALTER TABLE leads DISABLE ROW LEVEL SECURITY;
+ALTER TABLE intake_sessions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE intake_messages DISABLE ROW LEVEL SECURITY;
+ALTER TABLE mvp_prompts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE projects DISABLE ROW LEVEL SECURITY;
+
