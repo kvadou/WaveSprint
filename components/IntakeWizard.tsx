@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Sparkles
 } from 'lucide-react';
+import { RequirementsChat } from './RequirementsChat';
 
 type WizardData = {
   idea: string;
@@ -62,6 +63,7 @@ export function IntakeWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [chatComplete, setChatComplete] = useState(false);
   const [data, setData] = useState<WizardData>({
     idea: '',
     industry: '',
@@ -95,8 +97,10 @@ export function IntakeWizard() {
     if (!canProceed()) return;
 
     setIsSubmitting(true);
+
+    // Try to submit to API, but proceed to chat regardless
     try {
-      const response = await fetch('/api/contact', {
+      await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -107,15 +111,13 @@ export function IntakeWizard() {
           problemDescription: `[Timeline: ${data.timeline}] [Budget: ${data.budget}]\n\n${data.idea}`,
         }),
       });
-
-      if (response.ok) {
-        setIsSubmitted(true);
-      }
     } catch (error) {
-      console.error('Error submitting:', error);
-    } finally {
-      setIsSubmitting(false);
+      console.error('Error submitting to API:', error);
     }
+
+    // Always proceed to chat for requirements gathering
+    setIsSubmitted(true);
+    setIsSubmitting(false);
   };
 
   const nextStep = () => {
@@ -132,7 +134,8 @@ export function IntakeWizard() {
     }
   };
 
-  if (isSubmitted) {
+  // Final completion state - after chat is done
+  if (chatComplete) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -146,18 +149,45 @@ export function IntakeWizard() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', delay: 0.2 }}
-              className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan to-purple flex items-center justify-center"
+              className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-400 to-cyan flex items-center justify-center"
             >
               <CheckCircle2 className="w-10 h-10 text-background" />
             </motion.div>
             <h3 className="font-display text-3xl font-bold text-text mb-4">
-              Signal Received!
+              Requirements Captured!
             </h3>
-            <p className="text-text-muted text-lg max-w-md mx-auto">
-              We&apos;ve received your project details. Our team will reach out within 2 hours to discuss your MVP.
+            <p className="text-text-muted text-lg max-w-md mx-auto mb-6">
+              We have everything we need to start your sprint. Check your email for the scope document within 2 hours.
             </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Sprint Build Starting Soon
+            </div>
           </div>
         </div>
+      </motion.div>
+    );
+  }
+
+  // Requirements gathering chat - after initial form submission
+  if (isSubmitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative w-full max-w-4xl mx-auto"
+      >
+        {/* Glow effect */}
+        <div className="absolute -inset-4 bg-gradient-to-r from-purple/20 via-cyan/20 to-pink/20 rounded-3xl blur-2xl opacity-40" />
+
+        <RequirementsChat
+          initialData={data}
+          onComplete={(messages) => {
+            // Here you could save the conversation to a backend
+            console.log('Chat completed with messages:', messages);
+            setChatComplete(true);
+          }}
+        />
       </motion.div>
     );
   }
