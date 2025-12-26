@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Sparkles, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -24,70 +24,66 @@ interface RequirementsChatProps {
   onComplete: (messages: Message[]) => void;
 }
 
-// AI follow-up questions based on context
-const getFollowUpQuestions = (industry: string, idea: string) => {
-  const baseQuestions = [
-    "Who are the primary users of this app? Can you describe a typical user and what they're trying to accomplish?",
-    "What's the single most important feature this MVP needs to have? If it could only do one thing well, what would that be?",
-    "Are there any existing tools or competitors you've looked at? What do they get right, and what's missing?",
-    "Do you need user authentication? If so, should users be able to sign up with email, Google, or other methods?",
-    "Will this app need to integrate with any external services? (Payment processing, email, SMS, calendars, etc.)",
-    "What does success look like for this MVP? How will you know it's working?",
-  ];
-
-  const industrySpecific: Record<string, string[]> = {
-    healthcare: [
-      "Does this need to be HIPAA compliant? Will it handle protected health information (PHI)?",
-      "Will patients/clients need to book appointments? Should it sync with existing calendar systems?",
-    ],
-    ecommerce: [
-      "How many products will you start with? Do you need inventory management?",
-      "What payment methods do you need? (Stripe, PayPal, Apple Pay, etc.)",
-    ],
-    saas: [
-      "What's your pricing model? Free trial, freemium, subscription tiers?",
-      "Do you need team/organization features, or is this single-user focused?",
-    ],
-    marketplace: [
-      "How will you handle trust between buyers and sellers? Reviews, verification, escrow?",
-      "What's the transaction flow? Who pays whom, and when?",
-    ],
-    education: [
-      "Will there be progress tracking or certifications?",
-      "Do you need live video, or is this async content delivery?",
-    ],
-    fintech: [
-      "What financial regulations apply? Do you need compliance features?",
-      "How sensitive is the data? What level of security is required?",
-    ],
-    social: [
-      "What's the core interaction? Posting, messaging, matching, following?",
-      "How do you plan to handle content moderation?",
-    ],
-    internal: [
-      "How many team members will use this? Do you need role-based permissions?",
-      "Does this need to integrate with your existing tools? (Slack, Google Workspace, etc.)",
-    ],
-    other: [],
-  };
-
-  const specific = industrySpecific[industry] || [];
-  return [...specific, ...baseQuestions];
-};
-
 export function RequirementsChat({ initialData, onComplete }: RequirementsChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [questionCount, setQuestionCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const hasInitialized = useRef(false);
 
-  const questions = getFollowUpQuestions(initialData.industry, initialData.idea);
+  // Get conversation history in format for API
+  const getConversationHistory = useCallback((msgs: Message[]) => {
+    return msgs
+      .filter(m => m.role !== 'system')
+      .map(m => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      }));
+  }, []);
+
+  // Fetch next question from Claude API
+  const fetchNextQuestion = useCallback(async (
+    currentMessages: Message[],
+    userMessage?: string
+  ): Promise<{ question: string; isComplete: boolean }> => {
+    try {
+      const response = await fetch('/api/chat/requirements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadName: initialData.name,
+          industry: initialData.industry,
+          initialIdea: initialData.idea,
+          timeline: initialData.timeline,
+          budget: initialData.budget,
+          conversationHistory: getConversationHistory(currentMessages),
+          userMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching next question:', error);
+      // Fallback response
+      return {
+        question: "Thanks for sharing! Could you tell me more about the key features you need for this MVP?",
+        isComplete: false,
+      };
+    }
+  }, [initialData, getConversationHistory]);
 
   // Initialize conversation
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     const initConversation = async () => {
       // System message (not shown to user)
       const systemMsg: Message = {
@@ -99,7 +95,9 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
 
       // Initial greeting
       setIsTyping(true);
-      await new Promise(r => setTimeout(r, 1000));
+
+      // Simulate AI thinking time
+      await new Promise(r => setTimeout(r, 800));
 
       const greeting: Message = {
         id: 'greeting',
@@ -108,53 +106,41 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
         timestamp: new Date(),
       };
 
-      setMessages([systemMsg, greeting]);
+      const initialMessages = [systemMsg, greeting];
+      setMessages(initialMessages);
       setIsTyping(false);
 
       // First question after a delay
-      await new Promise(r => setTimeout(r, 1500));
-      askNextQuestion(0, [systemMsg, greeting]);
+      await new Promise(r => setTimeout(r, 1000));
+      await askNextQuestion(initialMessages);
     };
 
     initConversation();
-  }, []);
+  }, [initialData]);
 
-  const askNextQuestion = async (index: number, currentMessages: Message[]) => {
-    if (index >= questions.length || index >= 6) {
-      // Max 6 questions, then wrap up
-      await wrapUp(currentMessages);
-      return;
-    }
-
+  const askNextQuestion = async (currentMessages: Message[]) => {
     setIsTyping(true);
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 700));
+
+    // Simulate AI thinking time
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 800));
+
+    const result = await fetchNextQuestion(currentMessages);
 
     const questionMsg: Message = {
-      id: `question-${index}`,
+      id: `question-${Date.now()}`,
       role: 'assistant',
-      content: questions[index],
+      content: result.question,
       timestamp: new Date(),
     };
 
-    setMessages([...currentMessages, questionMsg]);
-    setQuestionIndex(index + 1);
+    const newMessages = [...currentMessages, questionMsg];
+    setMessages(newMessages);
+    setQuestionCount(prev => prev + 1);
     setIsTyping(false);
-  };
 
-  const wrapUp = async (currentMessages: Message[]) => {
-    setIsTyping(true);
-    await new Promise(r => setTimeout(r, 1000));
-
-    const wrapUpMsg: Message = {
-      id: 'wrapup',
-      role: 'assistant',
-      content: `This is really helpful! I have a clear picture of what you're building.\n\n**Summary:**\n- ${initialData.industry.charAt(0).toUpperCase() + initialData.industry.slice(1)} app focused on ${initialData.idea.slice(0, 100)}...\n- Timeline: ${initialData.timeline}\n- Budget: ${initialData.budget}\n\nI'm ready to start the sprint. You'll receive a detailed scope document within 2 hours, and we'll begin building immediately after your approval.\n\nAnything else you want to add before we kick off?`,
-      timestamp: new Date(),
-    };
-
-    setMessages([...currentMessages, wrapUpMsg]);
-    setIsTyping(false);
-    setIsComplete(true);
+    if (result.isComplete) {
+      setIsComplete(true);
+    }
   };
 
   const handleSend = async () => {
@@ -172,14 +158,14 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
     setInput('');
 
     if (isComplete) {
-      // Final confirmation
+      // Final confirmation - user added something after wrap-up
       setIsTyping(true);
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 800));
 
       const finalMsg: Message = {
         id: 'final',
         role: 'assistant',
-        content: "Perfect! I've captured everything. You'll hear from us within 2 hours with your scope document. Get ready to see your idea come to life! 🚀",
+        content: "Perfect! I've captured everything. You'll hear from us within 2 hours with your scope document. Get ready to see your idea come to life!",
         timestamp: new Date(),
       };
 
@@ -190,8 +176,8 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
       // Trigger completion callback
       setTimeout(() => onComplete(finalMessages), 2000);
     } else {
-      // Continue with next question
-      await askNextQuestion(questionIndex, newMessages);
+      // Fetch next question from Claude
+      await askNextQuestion(newMessages);
     }
   };
 
@@ -224,7 +210,7 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
           </div>
           <div>
             <h3 className="font-semibold text-text">Requirements Assistant</h3>
-            <p className="text-xs text-text-muted">Gathering project details</p>
+            <p className="text-xs text-text-muted">AI-powered project discovery</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -303,13 +289,13 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
       <div className="px-6 py-2 border-t border-white/5">
         <div className="flex items-center justify-between text-xs text-text-muted mb-1">
           <span>Requirements gathering</span>
-          <span>{Math.min(questionIndex, 6)} of 6 questions</span>
+          <span>{Math.min(questionCount, 6)} of ~6 questions</span>
         </div>
         <div className="h-1 rounded-full bg-white/5 overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-cyan to-purple"
             initial={{ width: '0%' }}
-            animate={{ width: `${(Math.min(questionIndex, 6) / 6) * 100}%` }}
+            animate={{ width: `${Math.min((questionCount / 6) * 100, 100)}%` }}
             transition={{ duration: 0.3 }}
           />
         </div>
@@ -323,7 +309,7 @@ export function RequirementsChat({ initialData, onComplete }: RequirementsChatPr
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isTyping ? "Waiting for response..." : "Type your answer..."}
+            placeholder={isTyping ? "AI is thinking..." : "Type your answer..."}
             disabled={isTyping}
             rows={1}
             className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-text placeholder:text-text-muted focus:outline-none focus:border-cyan/30 focus:ring-1 focus:ring-cyan/20 resize-none disabled:opacity-50"
