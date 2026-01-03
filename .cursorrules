@@ -1,0 +1,72 @@
+# Cursor Rules for Wavesprint (AI Consulting Lead Capture)
+
+## Project Overview
+Landing page + intelligent intake system for AI consulting leads.
+Personal project — keep it simple, optimize for conversion.
+
+## Tech Stack
+- **Framework**: Next.js 14 (App Router, TypeScript)
+- **Database**: Supabase (PostgreSQL)
+- **Styling**: Tailwind CSS
+- **AI**: Anthropic Claude API (lib/ai/assistant.ts)
+- **Email**: Resend
+- **Deployment**: Vercel
+
+## Key Commands
+```bash
+npm run dev      # Start dev server (localhost:3000)
+npm run build    # Production build
+npm run lint     # ESLint
+```
+
+## Directory Structure
+```
+app/
+├── page.tsx          # Landing page
+├── thanks/           # Thank you page
+├── admin/            # Lead management dashboard
+└── api/
+    ├── intake/       # AI conversation handler
+    └── contact/      # Contact form handler
+components/           # React components
+lib/
+├── db.ts             # Supabase client (needs integration)
+└── ai/assistant.ts   # AI response generation (needs integration)
+```
+
+## Design Theme: "Radio Transmission"
+- Background: `#0a0a0f` (near-black)
+- Cyan accent: `#00d4ff`
+- Glow effects on CTAs
+- "Signal" metaphors throughout
+
+## Integration TODOs
+- [ ] Supabase: Replace mocks in lib/db.ts with real queries
+- [ ] AI: Implement generateNextIntakeTurn in lib/ai/assistant.ts
+- [ ] Email: Uncomment Resend code in app/api/contact/route.ts
+
+## Anti-Slop Rules
+Do NOT:
+- Over-engineer the backend (admin key auth is fine)
+- Add features that don't drive conversions
+- Make it look like an "AI demo" — keep it professional
+- Create util files for single-use functions
+
+## Portfolio Content
+Showcase Story Time Chess work:
+- ATS (replacing Greenhouse) — saved $X/year
+- Operations Hub (replacing TutorCruncher)
+- Play (virtual classroom)
+
+## Environment Variables
+```env
+NEXT_PUBLIC_SITE_URL=      # Your domain
+SUPABASE_URL=              # Supabase project URL
+SUPABASE_ANON_KEY=         # Supabase public key
+RESEND_API_KEY=            # Email service
+ANTHROPIC_API_KEY=         # AI assistant
+ADMIN_KEY=                 # Admin dashboard access
+```
+
+## Reference
+See CLAUDE.md for full context and retrospectives.
