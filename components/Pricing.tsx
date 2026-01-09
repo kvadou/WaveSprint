@@ -5,11 +5,11 @@ import { Check, Zap, Rocket, Building2, RefreshCw, ArrowRight } from 'lucide-rea
 
 const tiers = [
   {
-    id: 'mvp',
-    name: '24-Hour MVP',
+    id: 'spark',
+    name: '24-Hour Spark',
     price: '$1,500',
     priceRange: '$1,500 – $2,500',
-    description: 'Rapid prototype of your core concept',
+    description: 'Prove your concept works — fast',
     icon: Zap,
     color: 'cyan',
     popular: false,
@@ -21,7 +21,7 @@ const tiers = [
       '1 round of revisions',
       'Source code ownership',
     ],
-    cta: 'Start MVP',
+    cta: 'Ignite',
   },
   {
     id: 'finalize',
@@ -44,11 +44,11 @@ const tiers = [
     cta: 'Get Started',
   },
   {
-    id: 'full',
-    name: 'Full Production',
+    id: 'mcp',
+    name: 'Full MCP',
     price: '$7,500',
     priceRange: '$7,500 – $25,000',
-    description: 'Complete, scalable production app',
+    description: 'Your Maximum Conceivable Product',
     icon: Building2,
     color: 'pink',
     popular: false,
@@ -62,7 +62,7 @@ const tiers = [
       'Security hardening',
       '30 days support included',
     ],
-    cta: 'Contact Us',
+    cta: 'Build Big',
   },
   {
     id: 'maintenance',
