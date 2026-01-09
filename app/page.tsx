@@ -31,26 +31,27 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan/10 border border-cyan/20 mb-8">
                 <div className="signal-dot" />
                 <span className="text-sm font-medium text-cyan">
-                  Now accepting projects
+                  Now building MCPs
                 </span>
               </div>
 
               {/* Headline */}
               <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-6">
-                <span className="text-text">Transmit your idea.</span>
+                <span className="text-text">From MVP to MCP</span>
                 <br />
                 <span className="gradient-text">
-                  Receive a working app
+                  faster than ever.
                 </span>
-                <br />
-                <span className="text-text">in 24 hours.</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-lg sm:text-xl lg:text-2xl text-text-muted max-w-3xl mx-auto mb-10">
-                Enter your concept into the WaveSprint Console.
-                <br className="hidden sm:block" />
-                We interpret your signal and sprint an MVP into reality.
+              <p className="text-lg sm:text-xl lg:text-2xl text-text-muted max-w-3xl mx-auto mb-6">
+                Stop thinking small. Build the <span className="text-cyan font-semibold">Maximum Conceivable Product</span> using cutting-edge AI.
+              </p>
+
+              {/* MCP Explainer */}
+              <p className="text-sm sm:text-base text-text-muted/70 max-w-2xl mx-auto mb-10">
+                MCP: Not the stripped-down version — the ambitious one you actually wanted to build.
               </p>
 
               {/* CTA Buttons */}
@@ -60,7 +61,7 @@ export default function Home() {
                   className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-cyan text-background font-semibold text-lg rounded-xl hover:bg-cyan-400 transition-all shadow-glow-md hover:shadow-glow-lg"
                 >
                   <Radio className="w-5 h-5" />
-                  Start My 24-Hour MVP
+                  Build My MCP
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link

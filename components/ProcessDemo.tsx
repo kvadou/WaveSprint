@@ -32,8 +32,8 @@ const steps = [
   {
     id: 4,
     icon: Rocket,
-    title: 'MVP Delivered',
-    description: 'Working app in your hands',
+    title: 'MCP Delivered',
+    description: 'Your full vision, realized',
     duration: 'Done!',
     color: 'emerald',
   },

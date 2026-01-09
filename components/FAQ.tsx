@@ -6,8 +6,12 @@ import { ChevronDown, HelpCircle } from 'lucide-react';
 
 const faqs = [
   {
-    question: 'How does the 24-hour MVP actually work?',
-    answer: `Here's the process: You submit your idea through our intake wizard. We schedule a 30-minute call to clarify requirements (usually same day). Then I build your MVP overnight or through the next day. You get a working prototype with core functionality—not just mockups—that you can click through, test, and share. From there, we iterate based on your feedback.`,
+    question: 'What does MCP mean?',
+    answer: `MCP stands for Maximum Conceivable Product—the opposite of MVP (Minimum Viable Product). Instead of "what's the smallest thing we can ship?", we ask "what's the full vision you actually want to build?" AI has changed the game: complexity that used to require huge teams and months of work can now be handled in days. You don't have to think small anymore.`,
+  },
+  {
+    question: 'How does the 24-hour prototype work?',
+    answer: `Here's the process: You submit your idea through our intake wizard. We schedule a 30-minute call to clarify requirements (usually same day). Then I build your prototype overnight or through the next day. You get a working proof of concept with core functionality—not just mockups—that you can click through, test, and share. From there, we scale up to your full MCP.`,
   },
   {
     question: 'Do I own the code?',
@@ -18,16 +22,16 @@ const faqs = [
     answer: `I primarily work with React/Next.js for the frontend, Node.js for the backend, PostgreSQL for databases, and Tailwind for styling. For hosting, I typically use Vercel, AWS, or Supabase depending on your needs. That said, I'm flexible—if you have an existing stack or specific requirements, we can work with that.`,
   },
   {
-    question: 'What happens after the MVP?',
-    answer: `You have options. Many clients use the MVP to validate their idea, get feedback, or demo to stakeholders. From there, you can: 1) Continue with me for the finalization sprint (1-2 weeks to polish and add features), 2) Move to a full production build, or 3) Take the code and run with it yourself. No pressure either way.`,
+    question: 'What happens after the initial prototype?',
+    answer: `You have options. Many clients use the 24-Hour Spark to validate their idea, get feedback, or demo to stakeholders. From there, you can: 1) Continue with me for the finalization sprint (1-2 weeks to polish and add features), 2) Go full MCP—the complete, ambitious version you actually envisioned, or 3) Take the code and run with it yourself. No pressure either way.`,
   },
   {
     question: 'What if I need changes or revisions?',
-    answer: `The MVP phase includes one round of revisions. During finalization, we iterate until you're happy. For ongoing projects, I offer maintenance packages starting at $399/month that include updates, bug fixes, and feature additions. I'm not going to disappear after launch.`,
+    answer: `The Spark phase includes one round of revisions. During finalization, we iterate until you're happy. For full MCP builds, we keep going until your complete vision is realized. I also offer maintenance packages starting at $399/month for updates, bug fixes, and feature additions. I'm not going to disappear after launch.`,
   },
   {
-    question: 'How is this so fast compared to agencies?',
-    answer: `Three reasons: 1) I'm a single decision-maker, not a committee. No project managers scheduling meetings about meetings. 2) Modern tools and AI have dramatically accelerated development—I can generate and iterate on code 10x faster than before. 3) I focus on what matters for your MVP and cut everything else. No scope creep, no gold-plating.`,
+    question: 'How can you build bigger AND faster than agencies?',
+    answer: `Three reasons: 1) I'm a single decision-maker, not a committee. No project managers scheduling meetings about meetings. 2) AI has fundamentally changed development—I can generate and iterate on code 10x faster than before, handling complexity that used to require entire teams. 3) I focus on what matters and cut the bureaucracy. More ambition, less overhead.`,
   },
   {
     question: 'Is my idea protected/confidential?',

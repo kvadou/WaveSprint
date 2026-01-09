@@ -73,7 +73,7 @@ export function Header() {
                 href="#console"
                 className="relative px-5 py-2.5 text-sm font-semibold text-background bg-cyan rounded-lg overflow-hidden group"
               >
-                <span className="relative z-10">Start Your MVP</span>
+                <span className="relative z-10">Start Your MCP</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
             </div>
@@ -137,7 +137,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block w-full text-center px-6 py-3 text-base font-semibold text-background bg-cyan rounded-lg"
                   >
-                    Start Your MVP
+                    Start Your MCP
                   </Link>
                 </motion.div>
               </div>
